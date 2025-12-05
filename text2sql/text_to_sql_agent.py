@@ -1,5 +1,5 @@
 from langchain.tools import BaseTool
-from text2sql.utils.db_utils import PostgresDatabaseManager
+from text2sql.utils.db_utils import PostgresDatabaseManager, load_db_config, build_connection_string
 from text2sql.tools.text_to_sql_tools import ListTablesTool, TableSchemaTool,SQLQueryTool, SQLQueryCheckerTool
 from typing import List
 from langchain_openai import ChatOpenAI
@@ -7,10 +7,10 @@ import os
 from langchain.agents import create_agent
 
 
-def get_tools(host: str, port: int, db_name: str, user: str, password: str) -> List[BaseTool]:
+def get_tools_from_config(config_path: str | None = None) -> List[BaseTool]:
     """获取所有可用的工具."""
-    connection_string = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
-    db_manager = PostgresDatabaseManager(connection_string)
+    cfg = load_db_config(config_path)
+    db_manager = PostgresDatabaseManager(build_connection_string(cfg))
     return [
         ListTablesTool(db_manager=db_manager),
         TableSchemaTool(db_manager=db_manager),
@@ -18,13 +18,7 @@ def get_tools(host: str, port: int, db_name: str, user: str, password: str) -> L
         SQLQueryCheckerTool(db_manager=db_manager)
     ]
 
-tools = get_tools(
-    host="localhost",
-    port=5432,
-    db_name="shop_db",
-    user="xxx",
-    password="xxx"
-)
+tools = get_tools_from_config()
 
 system_prompt = """
 你是一个专业的postgreSQL查询助手。

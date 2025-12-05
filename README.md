@@ -105,3 +105,5 @@ Name: sql_query
 ```python
 langgraph dev --port 8000 --allow-blocking 
 ```
+
+![效果](./langgraph-text2sql.gif)

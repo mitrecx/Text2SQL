@@ -3,6 +3,7 @@ from sqlalchemy import inspect
 from sqlalchemy.sql import text
 from typing import List, Optional
 import json
+from pathlib import Path
 from .log_utils import log
 
 class PostgresDatabaseManager:
@@ -178,15 +179,20 @@ class PostgresDatabaseManager:
             return f"错误: SQL查询解析失败 - {e}"
         
         
+def load_db_config(config_path: Optional[str] = None) -> dict:
+    p = Path(config_path) if config_path else (Path(__file__).resolve().parent.parent / "config.json")
+    with p.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("db", data)
+
+
+def build_connection_string(cfg: dict) -> str:
+    return f"postgresql://{cfg['user']}:{cfg['password']}@{cfg['host']}:{cfg['port']}/{cfg['database']}"
+
+
 if __name__ == "__main__":
-    DB_CONFIG={
-        "host": "localhost",
-        "port": 5432,
-        "database": "shop_db",
-        "user": "xxx",
-        "password": "xxx",
-    }
-    db_manager = PostgresDatabaseManager(f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}")
+    cfg = load_db_config()
+    db_manager = PostgresDatabaseManager(build_connection_string(cfg))
     print(db_manager.get_table_names())
     print(db_manager.get_tables_with_comments())
     print(db_manager.get_table_schema(['orders']))

@@ -1,5 +1,5 @@
 from langchain.tools import BaseTool
-from text2sql.utils.db_utils import PostgresDatabaseManager
+from text2sql.utils.db_utils import PostgresDatabaseManager, load_db_config, build_connection_string
 from text2sql.utils.log_utils import log
 from pydantic import Field, create_model
 from typing import Optional
@@ -116,14 +116,8 @@ class SQLQueryCheckerTool(BaseTool):
         return self._run(query)
     
 if __name__ == "__main__":
-    DB_CONFIG={
-        "host": "localhost",
-        "port": 5432,
-        "database": "shop_db",
-        "user": "xxx",
-        "password": "xxx",
-    }
-    db_manager = PostgresDatabaseManager(f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}")
+    cfg = load_db_config()
+    db_manager = PostgresDatabaseManager(build_connection_string(cfg))
     # tool = ListTablesTool(db_manager=db_manager)
     # print(tool.invoke({}))
     

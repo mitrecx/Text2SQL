@@ -8,10 +8,10 @@
 - 已安装 Python 3.11 或以上版本
 - 已安装必要的 Python 库（见 `requirements.txt`）
 
-## 测试数据:
+## 测试数据(text2sql/test-sql/):
 - 数据库名称: `shop_db`
-- 表结构: `test_tables_ddl.sql`
-- 测试数据: `test_tables_dml.sql`
+- 表结构: `text2sql/test-sql/test_tables_ddl.sql`
+- 测试数据: `text2sql/test-sql/test_tables_dml.sql`
 - 数据库用户: `xxx`
 - 数据库密码: `xxx`
 
